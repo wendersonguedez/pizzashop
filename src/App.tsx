@@ -1,9 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { BrowserRouter, Route, Routes } from "react-router";
+
+import { Dashboard } from "@/pages/app/dashboard";
+import { SignIn } from "@/pages/auth/sign-in";
 
 export function App() {
   return (
-    <div className="flex h-screen items-center justify-center">
-      <Button>Clique</Button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/sign-in" element={<SignIn />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
