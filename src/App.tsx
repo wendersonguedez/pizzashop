@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 
 export function App() {
-	return (
-		<div className="flex justify-center items-center h-screen">
-			<Button>Clique</Button>
-		</div>
-	);
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <Button>Clique</Button>
+    </div>
+  );
 }
