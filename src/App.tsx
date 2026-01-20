@@ -1,3 +1,4 @@
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Route, Routes } from "react-router";
 
 import { AppLayout } from "@/pages/_layouts/app";
@@ -7,15 +8,18 @@ import { SignIn } from "@/pages/auth/sign-in";
 
 export function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<Dashboard />} />
-        </Route>
-        <Route path="/" element={<AuthLayout />}>
-          <Route path="/sign-in" element={<SignIn />}></Route>
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <HelmetProvider>
+      <Helmet titleTemplate="%s | pizza.shop" />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AppLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route path="/" element={<AuthLayout />}>
+            <Route path="/sign-in" element={<SignIn />}></Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
