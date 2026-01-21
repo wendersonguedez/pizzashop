@@ -16,7 +16,7 @@ export function App() {
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
           <Route path="/" element={<AuthLayout />}>
-            <Route path="/sign-in" element={<SignIn />}></Route>
+            <Route path="/sign-in" element={<SignIn />} />
           </Route>
         </Routes>
       </BrowserRouter>
