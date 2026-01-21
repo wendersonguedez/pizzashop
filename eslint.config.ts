@@ -16,6 +16,7 @@ export default defineConfig([
 
     rules: {
       "simple-import-sort/imports": "error",
+      "@typescript-eslint/no-unused-vars": "off",
     },
     languageOptions: { globals: globals.browser },
   },
