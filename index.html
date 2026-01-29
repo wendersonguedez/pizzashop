@@ -6,6 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="/src/index.css" rel="stylesheet">
   <title>pizza.shop</title>
+  <script>
+    (function () {
+      const storageKey = "pizzashop-theme";
+
+      const theme = localStorage.getItem(storageKey);
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
+      if (theme === "dark" || (!theme && systemTheme === "dark") || (theme === "system" && systemTheme === "dark")) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    })();
+  </script>
 </head>
 
 <body>
