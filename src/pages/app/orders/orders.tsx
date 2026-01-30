@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
+import { Pagination } from "@/components/pagination";
 import {
   Table,
   TableBody,
@@ -7,9 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { OrderTableRow } from "./order-table-row";
+
 import { OrderTableFilters } from "./order-table-filters";
-import { Pagination } from "@/components/pagination";
+import { OrderTableRow } from "./order-table-row";
 
 export function Orders() {
   return (
