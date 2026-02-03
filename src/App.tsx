@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { AppLayout } from "@/pages/_layouts/app";
 import { AuthLayout } from "@/pages/_layouts/auth";
+import { NotFound } from "@/pages/404";
 import { Dashboard } from "@/pages/app/dashboard/dashboard";
 import { Orders } from "@/pages/app/orders/orders";
 import { SignIn } from "@/pages/auth/sign-in";
@@ -19,14 +20,21 @@ export function App() {
           <Helmet titleTemplate="%s | pizza.shop" />
           <BrowserRouter>
             <Routes>
+              {/* Rotas da Aplicação (Dashboard, etc) */}
               <Route path="/" element={<AppLayout />}>
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/orders" element={<Orders />} />
               </Route>
+
+              {/* Rotas de Autenticação */}
               <Route path="/" element={<AuthLayout />}>
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
               </Route>
+
+              {/* Rota 404 (Catch-all) */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </ThemeProvider>
