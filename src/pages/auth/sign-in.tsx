@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -20,11 +20,21 @@ const signInFormSchema = z.object({
 type signInFormSchemaType = z.infer<typeof signInFormSchema>;
 
 export function SignIn() {
+  const [searchParams] = useSearchParams();
+
+  /**
+   * defaultValues: Captura o e-mail da URL (caso o usuário tenha sido redirecionado após o cadastro)
+   * e pré-preenche o campo de e-mail no formulário de login.
+   */
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<signInFormSchemaType>();
+  } = useForm<signInFormSchemaType>({
+    defaultValues: {
+      email: searchParams.get("email") ?? "",
+    },
+  });
 
   /**
    * useMutation: Hook do React Query para operações de escrita (POST/PUT/DELETE).
