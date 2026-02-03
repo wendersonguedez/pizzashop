@@ -1,9 +1,11 @@
+import { useMutation } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { signIn } from "@/api/sign-in";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,9 +26,22 @@ export function SignIn() {
     formState: { isSubmitting },
   } = useForm<signInFormSchemaType>();
 
+  /**
+   * useMutation: Hook do React Query para operações de escrita (POST/PUT/DELETE).
+   * * - mutationFn: A função que executa a operação assíncrona. Ao passar 'signIn', conectamos
+   * diretamente à chamada da API.
+   *
+   * * - mutateAsync: A função que dispara a mutação. Renomeamos para 'authenticate' para ficar
+   * semântico. Diferente do 'mutate' comum, ela retorna uma Promise, permitindo usar
+   * await e try/catch dentro do handleSignIn.
+   */
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: signIn,
+  });
+
   async function handleSignIn(data: signInFormSchemaType) {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await authenticate({ email: data.email });
 
       toast.success("Enviamos um link com autenticação para seu e-mail.", {
         duration: 5000,
