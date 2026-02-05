@@ -27,6 +27,15 @@ export function AccountMenu() {
     useQuery({
       queryKey: ["managed-restaurant"],
       queryFn: getManagedRestaurant,
+      /**
+       * staleTime: Define por quanto tempo os dados são considerados "frescos". Durante esse período, o React Query não irá refazer a
+       * requisição para obter os dados novamente, mesmo que o componente seja re-renderizado ou re-montado.
+       * No caso do perfil da loja, as informações não mudam com frequência, então podemos definir um tempo infinito para evitar requisições desnecessárias.
+       *
+       * É necessário adicionar essa flag nos outros componentes que também buscam as informações do restaurante gerenciado,
+       * como o dashboard, para garantir que a informação seja consistente em toda a aplicação e evitar refetch desnecessário.
+       */
+      staleTime: Infinity,
     });
 
   return (
