@@ -1,10 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-import { getManagedRestaurant } from "@/api/get-managed-restaurant";
+import {
+  getManagedRestaurant,
+  type GetManagedRestaurantResponse,
+} from "@/api/get-managed-restaurant";
 import { updateProfile } from "@/api/update-profile";
 import { Button } from "@/components/ui/button";
 
@@ -20,7 +23,16 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 
+const storeProfileFormSchema = z.object({
+  name: z.string().min(1, "O nome é obrigatório"),
+  description: z.string(),
+});
+
+type StoreProfileFormSchemaType = z.infer<typeof storeProfileFormSchema>;
+
 export function StoreProfileDialog() {
+  const queryClient = useQueryClient();
+
   const { data: managedRestaurant } = useQuery({
     queryKey: ["managed-restaurant"],
     queryFn: getManagedRestaurant,
@@ -34,13 +46,6 @@ export function StoreProfileDialog() {
      */
     staleTime: Infinity,
   });
-
-  const storeProfileFormSchema = z.object({
-    name: z.string().min(1, "O nome é obrigatório"),
-    description: z.string(),
-  });
-
-  type StoreProfileFormSchemaType = z.infer<typeof storeProfileFormSchema>;
 
   const {
     register,
@@ -56,6 +61,31 @@ export function StoreProfileDialog() {
 
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
+    onSuccess: (_, { name, description }) => {
+      const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+        "managed-restaurant",
+      ]);
+
+      /**
+       * Atualiza o cache do React Query para refletir as mudanças feitas no perfil da loja,
+       * garantindo que outros componentes que dependem desses dados exibam as informações atualizadas.
+       *
+       * Estará atualizando apenas o nome e a descrição, mantendo os outros dados inalterados.
+       */
+      if (cached) {
+        queryClient.setQueryData<GetManagedRestaurantResponse>(
+          ["managed-restaurant"],
+          {
+            ...cached,
+            name,
+            description,
+          },
+        );
+      }
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar perfil da loja.");
+    },
   });
 
   async function handleUpdateProfile(data: StoreProfileFormSchemaType) {
