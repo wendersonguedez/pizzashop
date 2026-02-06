@@ -25,7 +25,7 @@ import { Textarea } from "./ui/textarea";
 
 const storeProfileFormSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório"),
-  description: z.string(),
+  description: z.string().nullable(),
 });
 
 type StoreProfileFormSchemaType = z.infer<typeof storeProfileFormSchema>;
@@ -59,46 +59,56 @@ export function StoreProfileDialog() {
     },
   });
 
+  function updateManagedRestaurantCache({
+    name,
+    description,
+  }: StoreProfileFormSchemaType) {
+    const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+      "managed-restaurant",
+    ]);
+
+    /**
+     * Atualiza o cache do React Query para refletir as mudanças feitas no perfil da loja,
+     * garantindo que outros componentes que dependem desses dados exibam as informações atualizadas.
+     *
+     * Estará atualizando apenas o nome e a descrição, mantendo os outros dados inalterados.
+     */
+    if (cached) {
+      queryClient.setQueryData<GetManagedRestaurantResponse>(
+        ["managed-restaurant"],
+        {
+          ...cached,
+          name,
+          description,
+        },
+      );
+    }
+
+    return { cached };
+  }
+
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
-    onSuccess: (_, { name, description }) => {
-      const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
-        "managed-restaurant",
-      ]);
-
-      /**
-       * Atualiza o cache do React Query para refletir as mudanças feitas no perfil da loja,
-       * garantindo que outros componentes que dependem desses dados exibam as informações atualizadas.
-       *
-       * Estará atualizando apenas o nome e a descrição, mantendo os outros dados inalterados.
-       */
-      if (cached) {
-        queryClient.setQueryData<GetManagedRestaurantResponse>(
-          ["managed-restaurant"],
-          {
-            ...cached,
-            name,
-            description,
-          },
-        );
-      }
+    onMutate: ({ name, description }) => {
+      const { cached } = updateManagedRestaurantCache({ name, description });
+      return { previousProfile: cached };
     },
-    onError: () => {
-      toast.error("Erro ao atualizar perfil da loja.");
+    onError(_, __, context) {
+      if (context?.previousProfile) {
+        updateManagedRestaurantCache(context.previousProfile);
+      }
+      toast.error("Falha ao atualizar perfil. As alterações foram desfeitas.");
+    },
+    onSuccess: () => {
+      toast.success("Perfil atualizado com sucesso!");
     },
   });
 
   async function handleUpdateProfile(data: StoreProfileFormSchemaType) {
-    try {
-      await updateProfileFn({
-        name: data.name,
-        description: data.description,
-      });
-
-      toast.success("Perfil atualizado com sucesso!");
-    } catch (error) {
-      toast.error("Erro ao atualizar perfil da loja.");
-    }
+    await updateProfileFn({
+      name: data.name,
+      description: data.description,
+    });
   }
 
   return (

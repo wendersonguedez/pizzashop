@@ -8,6 +8,8 @@ import { z } from "zod";
 const envSchema = z.object({
   VITE_API_URL: z.url(),
   VITE_ENABLE_API_DELAY: z.string().transform((value) => value === "true"),
+  VITE_ENABLE_API_ERROR: z.string().transform((value) => value === "true"),
+  VITE_API_ERROR_TARGET: z.string().optional(),
 });
 
 /**
