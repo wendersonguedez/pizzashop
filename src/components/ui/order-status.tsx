@@ -1,9 +1,12 @@
-type OrderStatus =
-  | "pending"
-  | "canceled"
-  | "processing"
-  | "delivering"
-  | "delivered";
+export const orderStatusArray = [
+  "pending",
+  "canceled",
+  "processing",
+  "delivering",
+  "delivered",
+] as const;
+
+export type OrderStatus = (typeof orderStatusArray)[number];
 
 interface OrderStatusProps {
   status: OrderStatus;

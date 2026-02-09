@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { getOrders } from "@/api/get-orders";
 import { Pagination } from "@/components/pagination";
+import { OrderStatus, orderStatusArray } from "@/components/ui/order-status";
 import {
   Table,
   TableBody,
@@ -18,6 +19,14 @@ import { OrderTableRow } from "./order-table-row";
 
 export function Orders() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const orderId = searchParams.get("orderId") ?? "";
+  const customerName = searchParams.get("customerName") ?? "";
+
+  const status = searchParams.get("status");
+  const isValidStatus =
+    status && orderStatusArray.includes(status as OrderStatus);
+  const finalStatus = isValidStatus ? (status as OrderStatus) : "all";
 
   /**
    * O backend espera um pageIndex baseado em zero, mas a interface do usuário é baseada em um pageIndex baseado em um.
@@ -37,8 +46,14 @@ export function Orders() {
     .parse(searchParams.get("page") ?? 0);
 
   const { data: result } = useQuery({
-    queryKey: ["orders", pageIndex],
-    queryFn: () => getOrders({ pageIndex }),
+    queryKey: ["orders", pageIndex, orderId, customerName, finalStatus],
+    queryFn: () =>
+      getOrders({
+        pageIndex,
+        orderId,
+        customerName,
+        status: finalStatus === "all" ? null : finalStatus,
+      }),
   });
 
   return (
