@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
+import { useSearchParams } from "react-router";
+import { z } from "zod";
 
 import { getOrders } from "@/api/get-orders";
 import { Pagination } from "@/components/pagination";
@@ -15,9 +17,28 @@ import { OrderTableFilters } from "./order-table-filters";
 import { OrderTableRow } from "./order-table-row";
 
 export function Orders() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  /**
+   * O backend espera um pageIndex baseado em zero, mas a interface do usuário é baseada em um pageIndex baseado em um.
+   * Portanto, precisamos subtrair 1 do pageIndex antes de enviá-lo para o backend. Se o pageIndex não for fornecido, assumimos que é 0 (primeira página).
+   *
+   * Exemplo:
+   * - Se o usuário estiver na página 1, o pageIndex será 1, mas o backend espera 0, então subtraímos 1 para obter 0.
+   * - Se o usuário estiver na página 2, o pageIndex será 2, mas o backend espera 1, então subtraímos 1 para obter 1.
+   * - Se o usuário estiver na página 3, o pageIndex será 3, mas o backend espera 2, então subtraímos 1 para obter 2.
+   * E assim por diante...
+   *
+   * Além disso, se o usuário fornecer um pageIndex menor ou igual a 0, definimos o pageIndex para 0 para evitar valores negativos.
+   */
+  const pageIndex = z.coerce
+    .number()
+    .transform((page) => (page <= 0 ? 0 : page - 1))
+    .parse(searchParams.get("page") ?? 0);
+
   const { data: result } = useQuery({
-    queryKey: ["orders"],
-    queryFn: getOrders,
+    queryKey: ["orders", pageIndex],
+    queryFn: () => getOrders({ pageIndex }),
   });
 
   return (
@@ -57,7 +78,20 @@ export function Orders() {
               </TableBody>
             </Table>
           </div>
-          <Pagination pageIndex={0} totalCount={105} perPage={10} />
+          {result && (
+            <Pagination
+              onPageChange={(pageIndex) => {
+                setSearchParams((prev) => {
+                  prev.set("page", (pageIndex + 1).toString());
+
+                  return prev;
+                });
+              }}
+              pageIndex={result.meta.pageIndex}
+              totalCount={result.meta.totalCount}
+              perPage={result.meta.perPage}
+            />
+          )}
         </div>
       </div>
     </>
