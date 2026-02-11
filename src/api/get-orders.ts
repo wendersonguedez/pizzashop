@@ -8,7 +8,7 @@ interface GetOrdersParams {
   status?: OrderStatus | "all" | null;
 }
 
-interface GetOrdersResponse {
+export interface GetOrdersResponse {
   orders: {
     orderId: string;
     createdAt: string;

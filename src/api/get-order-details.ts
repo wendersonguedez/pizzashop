@@ -1,11 +1,11 @@
 import type { OrderStatus } from "@/components/ui/order-status";
 import { api } from "@/lib/axios";
 
-interface GetOrderDetailsParams {
+interface CancelOrderParams {
   orderId: string;
 }
 
-interface GetOrderDetailsResponse {
+interface CancelOrderResponse {
   id: string;
   status: OrderStatus;
   createdAt: string;
@@ -25,8 +25,8 @@ interface GetOrderDetailsResponse {
   }[];
 }
 
-export async function getOrderDetails({ orderId }: GetOrderDetailsParams) {
-  const response = await api.get<GetOrderDetailsResponse>(`/orders/${orderId}`);
+export async function cancelOrder({ orderId }: CancelOrderParams) {
+  const response = await api.get<CancelOrderResponse>(`/orders/${orderId}`);
 
   return response.data;
 }
