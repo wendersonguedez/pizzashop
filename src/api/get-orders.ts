@@ -1,18 +1,18 @@
-import type { OrderStatus } from "@/components/ui/order-status";
+import type { OrderStatusType } from "@/components/ui/order-status";
 import { api } from "@/lib/axios";
 
 interface GetOrdersParams {
   pageIndex?: number | null;
   orderId?: string | null;
   customerName?: string | null;
-  status?: OrderStatus | "all" | null;
+  status?: OrderStatusType | "all" | null;
 }
 
 export interface GetOrdersResponse {
   orders: {
     orderId: string;
     createdAt: string;
-    status: "pending" | "canceled" | "processing" | "delivering" | "delivered";
+    status: OrderStatusType;
     customerName: string;
     total: number;
   }[];

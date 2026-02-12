@@ -6,10 +6,10 @@ export const orderStatusArray = [
   "delivered",
 ] as const;
 
-export type OrderStatus = (typeof orderStatusArray)[number];
+export type OrderStatusType = (typeof orderStatusArray)[number];
 
 interface OrderStatusProps {
-  status: OrderStatus;
+  status: OrderStatusType;
 }
 
 export function OrderStatus({ status }: OrderStatusProps) {
@@ -17,7 +17,7 @@ export function OrderStatus({ status }: OrderStatusProps) {
    * Mapeamento do status do pedido para cores. Isso centraliza a lógica de cores e facilita a manutenção futura,
    * caso seja necessário adicionar novos status ou alterar as cores existentes.
    */
-  const statusColors: Record<OrderStatus, string> = {
+  const statusColors: Record<OrderStatusType, string> = {
     pending: "bg-yellow-500",
     canceled: "bg-rose-500",
     processing: "bg-amber-500",
@@ -28,7 +28,7 @@ export function OrderStatus({ status }: OrderStatusProps) {
   /**
    * Mapeamento do status do pedido para texto legível. Isso facilita a manutenção e a tradução futura, caso necessário.
    */
-  const orderStatusText: Record<OrderStatus, string> = {
+  const orderStatusText: Record<OrderStatusType, string> = {
     pending: "Pendente",
     canceled: "Cancelado",
     processing: "Em processamento",
