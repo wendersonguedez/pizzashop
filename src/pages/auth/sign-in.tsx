@@ -9,6 +9,7 @@ import { signIn } from "@/api/sign-in";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useFlashMessage } from "@/hooks/use-flash-message";
 
 const signInFormSchema = z.object({
   email: z.email(),
@@ -21,6 +22,7 @@ type signInFormSchemaType = z.infer<typeof signInFormSchema>;
 
 export function SignIn() {
   const [searchParams] = useSearchParams();
+  useFlashMessage();
 
   /**
    * defaultValues: Captura o e-mail da URL (caso o usuário tenha sido redirecionado após o cadastro)

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 import { env } from "@/env";
 
@@ -66,3 +67,35 @@ if (env.VITE_ENABLE_API_ERROR) {
     return config;
   });
 }
+
+/**
+ * Interceptador de Resposta Global (Tratamento de Autenticação)
+ *
+ * Este interceptador monitora erros nas respostas da API. Se identificar um erro 401 (Unauthorized)
+ * com o código específico "UNAUTHORIZED", ele assume que a sessão do usuário expirou.
+ *
+ * Fluxo de tratamento (Flash Message Pattern):
+ * 1. Persistência: Grava uma flag no localStorage ('@pizzashop:auth-error') para indicar que houve erro de auth.
+ * Isso é necessário porque o redirecionamento abaixo fará um "Hard Reload", limpando a memória do JS.
+ *
+ * 2. Redirecionamento: Força a navegação para '/sign-in' via window.location.href.
+ * Isso garante que estados antigos (React Query, Contexts) sejam destruídos, evitando vazamento de dados.
+ *
+ * A exibição visual do erro (Toast) é responsabilidade da página de Login (ou hook useFlashMessage),
+ * que consumirá a flag do localStorage assim que a página carregar.
+ */
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response?.status === 401 &&
+      error.response?.data?.code === "UNAUTHORIZED"
+    ) {
+      localStorage.setItem("@pizzashop:auth-error", "true");
+
+      window.location.href = "/sign-in";
+    }
+
+    return Promise.reject(error);
+  },
+);
