@@ -5,6 +5,7 @@ import colors from "tailwindcss/colors";
 
 import { getPopularProducts } from "@/api/get-popular-products";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const COLORS = [
   colors.sky[500],
@@ -31,7 +32,7 @@ export function PopularProductsChart() {
         </div>
       </CardHeader>
       <CardContent>
-        {popularProducts && (
+        {popularProducts ? (
           <ResponsiveContainer width="100%" height={240}>
             <PieChart style={{ fontSize: 12 }}>
               <Pie
@@ -89,6 +90,14 @@ export function PopularProductsChart() {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
+        ) : (
+          <div className="flex h-60 w-full flex-col items-center justify-center gap-4">
+            <Skeleton className="h-32 w-32 rounded-full" />
+            <div className="flex gap-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>
