@@ -4,15 +4,15 @@ import { DollarSign } from "lucide-react";
 import { getMonthRenevue } from "@/api/get-month-revenue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { MetricCardSkeleton } from "./metric-card-skeleton";
+
 export function MonthRevenueCard() {
   const { data: getMonthRevenueAmount } = useQuery({
     queryFn: getMonthRenevue,
     queryKey: ["metrics", "month-revenue"],
   });
 
-  if (!getMonthRevenueAmount) return null;
-
-  const amountFormatted = getMonthRevenueAmount.receipt.toLocaleString(
+  const amountFormatted = getMonthRevenueAmount?.receipt.toLocaleString(
     "pt-BR",
     {
       style: "currency",
@@ -31,7 +31,7 @@ export function MonthRevenueCard() {
       </CardHeader>
 
       <CardContent className="space-y-1 pt-0">
-        {getMonthRevenueAmount && (
+        {getMonthRevenueAmount ? (
           <>
             <span className="text-2xl font-bold tracking-tight">
               {amountFormatted}
@@ -54,6 +54,8 @@ export function MonthRevenueCard() {
               )}
             </p>
           </>
+        ) : (
+          <MetricCardSkeleton />
         )}
       </CardContent>
     </Card>

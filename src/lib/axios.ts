@@ -8,7 +8,7 @@ export const api = axios.create({
 });
 
 /**
- * Irá interceptar todas as requisições e adicionar um delay de 1 segundo
+ * Irá interceptar todas as requisições e adicionar um delay aleatório entre 0 e 3 segundos, mas somente
  * caso a variável de ambiente VITE_ENABLE_API_DELAY esteja habilitada.
  *
  * Isso é útil para simular latência de rede durante o desenvolvimento.
@@ -18,7 +18,7 @@ export const api = axios.create({
 if (env.VITE_ENABLE_API_DELAY) {
   api.interceptors.request.use(async (config) => {
     await new Promise((resolve) => {
-      setTimeout(resolve, 2000);
+      setTimeout(resolve, Math.round(Math.random() * 3000));
     });
 
     return config;

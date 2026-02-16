@@ -4,17 +4,15 @@ import { Utensils } from "lucide-react";
 import { getDayOrdersAmount } from "@/api/get-day-orders-amount";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { MetricCardSkeleton } from "./metric-card-skeleton";
+
 export function DayOrdersAmountCard() {
   const { data: dayOrdersAmount } = useQuery({
     queryFn: getDayOrdersAmount,
     queryKey: ["metrics", "day-orders-amount"],
   });
 
-  if (!dayOrdersAmount) {
-    return null;
-  }
-
-  const amountFormatted = dayOrdersAmount.amount.toLocaleString("pt-BR");
+  const amountFormatted = dayOrdersAmount?.amount.toLocaleString("pt-BR");
 
   return (
     <Card>
@@ -24,7 +22,7 @@ export function DayOrdersAmountCard() {
       </CardHeader>
 
       <CardContent className="space-y-1 pt-0">
-        {dayOrdersAmount && (
+        {dayOrdersAmount ? (
           <>
             <span className="text-2xl font-bold tracking-tight">
               {amountFormatted}
@@ -47,6 +45,8 @@ export function DayOrdersAmountCard() {
               )}
             </p>
           </>
+        ) : (
+          <MetricCardSkeleton />
         )}
       </CardContent>
     </Card>
