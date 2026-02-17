@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { ptBR } from "date-fns/locale/pt-BR";
 
-import { cancelOrder } from "@/api/get-order-details";
+import { getOrderDetails } from "@/api/get-order-details";
 import {
   DialogContent,
   DialogDescription,
@@ -20,6 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { OrderDetailsSkeleton } from "./order-details-skeleton";
+
 interface OrderDetailsProps {
   orderId: string;
   open: boolean;
@@ -32,7 +34,7 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
    */
   const { data: orderDetails } = useQuery({
     queryKey: ["order", orderId],
-    queryFn: () => cancelOrder({ orderId }),
+    queryFn: () => getOrderDetails({ orderId }),
     enabled: open,
   });
 
@@ -51,10 +53,6 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
       minimumFractionDigits: 2,
     });
 
-  if (!orderDetails) {
-    return null;
-  }
-
   return (
     <div>
       <DialogContent>
@@ -63,7 +61,7 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
           <DialogDescription>Detalhes do pedido</DialogDescription>
         </DialogHeader>
 
-        {orderDetails && (
+        {orderDetails ? (
           <div className="space-y-6">
             <Table>
               <TableBody>
@@ -172,6 +170,8 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
               </TableFooter>
             </Table>
           </div>
+        ) : (
+          <OrderDetailsSkeleton />
         )}
       </DialogContent>
     </div>

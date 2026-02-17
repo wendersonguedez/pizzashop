@@ -1,13 +1,13 @@
-import type { OrderStatus } from "@/components/ui/order-status";
+import type { OrderStatusType } from "@/components/ui/order-status";
 import { api } from "@/lib/axios";
 
-interface CancelOrderParams {
+interface GetOrderParams {
   orderId: string;
 }
 
-interface CancelOrderResponse {
+interface GetOrderResponse {
   id: string;
-  status: OrderStatus;
+  status: OrderStatusType;
   createdAt: string;
   totalInCents: number;
   customer: {
@@ -25,8 +25,8 @@ interface CancelOrderResponse {
   }[];
 }
 
-export async function cancelOrder({ orderId }: CancelOrderParams) {
-  const response = await api.get<CancelOrderResponse>(`/orders/${orderId}`);
+export async function getOrderDetails({ orderId }: GetOrderParams) {
+  const response = await api.get<GetOrderResponse>(`/orders/${orderId}`);
 
   return response.data;
 }
