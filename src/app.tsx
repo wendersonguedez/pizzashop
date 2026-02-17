@@ -1,4 +1,5 @@
 import { QueryClientProvider } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "sonner";
@@ -13,6 +14,7 @@ import { SignIn } from "@/pages/auth/sign-in";
 import { SignUp } from "@/pages/auth/sign-up";
 
 import { queryClient } from "./lib/react-query";
+import { ErrorPage } from "./pages/error";
 
 export function App() {
   return (
@@ -23,23 +25,25 @@ export function App() {
           <Toaster richColors />
           <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-              <Routes>
-                {/* Rotas da Aplicação (Dashboard, etc) */}
-                <Route path="/" element={<AppLayout />}>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/orders" element={<Orders />} />
-                </Route>
+              <ErrorBoundary FallbackComponent={ErrorPage}>
+                <Routes>
+                  {/* Rotas da Aplicação (Dashboard, etc) */}
+                  <Route path="/" element={<AppLayout />}>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/orders" element={<Orders />} />
+                  </Route>
 
-                {/* Rotas de Autenticação */}
-                <Route path="/" element={<AuthLayout />}>
-                  <Route path="/sign-in" element={<SignIn />} />
-                  <Route path="/sign-up" element={<SignUp />} />
-                </Route>
+                  {/* Rotas de Autenticação */}
+                  <Route path="/" element={<AuthLayout />}>
+                    <Route path="/sign-in" element={<SignIn />} />
+                    <Route path="/sign-up" element={<SignUp />} />
+                  </Route>
 
-                {/* Rota 404 (Catch-all) */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+                  {/* Rota 404 (Catch-all) */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </ErrorBoundary>
             </BrowserRouter>
           </QueryClientProvider>
         </ThemeProvider>

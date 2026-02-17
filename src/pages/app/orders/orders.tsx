@@ -22,6 +22,9 @@ import { OrderTableRow } from "./order-table-row";
 import { OrderTableSkeleton } from "./order-table-skeleton";
 
 export function Orders() {
+  // Simulação de erro para teste do ErrorBoundary.
+  // throw new Error("Simulação de erro para teste do ErrorBoundary.");
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const orderId = searchParams.get("orderId") ?? "";
