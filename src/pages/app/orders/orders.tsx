@@ -5,7 +5,10 @@ import { z } from "zod";
 
 import { getOrders } from "@/api/get-orders";
 import { Pagination } from "@/components/pagination";
-import { OrderStatus, orderStatusArray } from "@/components/ui/order-status";
+import {
+  orderStatusArray,
+  type OrderStatusType,
+} from "@/components/ui/order-status";
 import {
   Table,
   TableBody,
@@ -16,6 +19,7 @@ import {
 
 import { OrderTableFilters } from "./order-table-filters";
 import { OrderTableRow } from "./order-table-row";
+import { OrderTableSkeleton } from "./order-table-skeleton";
 
 export function Orders() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,9 +28,11 @@ export function Orders() {
   const customerName = searchParams.get("customerName") ?? "";
 
   const status = searchParams.get("status");
+
   const isValidStatus =
-    status && orderStatusArray.includes(status as OrderStatus);
-  const finalStatus = isValidStatus ? (status as OrderStatus) : "all";
+    status && orderStatusArray.includes(status as OrderStatusType);
+
+  const finalStatus = isValidStatus ? (status as OrderStatusType) : "all";
 
   /**
    * O backend espera um pageIndex baseado em zero, mas a interface do usuário é baseada em um pageIndex baseado em um.
@@ -45,7 +51,7 @@ export function Orders() {
     .transform((page) => (page <= 0 ? 0 : page - 1))
     .parse(searchParams.get("page") ?? 0);
 
-  const { data: result } = useQuery({
+  const { data: result, isLoading: isLoadingOrders } = useQuery({
     queryKey: ["orders", pageIndex, orderId, customerName, finalStatus],
     queryFn: () =>
       getOrders({
@@ -79,6 +85,7 @@ export function Orders() {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {isLoadingOrders && <OrderTableSkeleton />}
                 {result && result.orders.length > 0 ? (
                   result.orders.map((order) => (
                     <OrderTableRow key={order.orderId} {...order} />
